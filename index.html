@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CGVyapam 2026 – Exam Prep App</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#08080f; --surface:#0f0f18; --card:#14141e; --border:#1e1e2e; --border2:#28283a;
+  --orange:#f97316; --gold:#eab308; --green:#22c55e; --cyan:#06b6d4;
+  --violet:#8b5cf6; --rose:#f43f5e; --sky:#38bdf8; --lime:#84cc16; --amber:#f59e0b;
+  --text:#e2e8f0; --muted:#4a5568; --soft:#718096;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;
+  background-image:radial-gradient(ellipse 60% 35% at 5% 0%,rgba(249,115,22,.07) 0%,transparent 55%),
+  radial-gradient(ellipse 50% 35% at 95% 5%,rgba(139,92,246,.07) 0%,transparent 55%);}
+
+/* NAV */
+.nav{display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--border);
+  overflow-x:auto;position:sticky;top:0;z-index:100;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{padding:14px 18px;font-size:.75rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:1px;border:none;background:transparent;color:var(--muted);cursor:pointer;
+  white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.nav-btn.active{color:var(--orange);border-bottom-color:var(--orange);}
+.nav-btn:hover:not(.active){color:var(--text);}
+
+/* PAGES */
+.page{display:none;padding:20px 16px 40px;animation:fadeUp .35s ease both;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* COMMON */
+.page-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:4px;}
+.page-sub{font-size:.75rem;color:var(--muted);margin-bottom:20px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:14px;}
+.sec-title{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;}
+.btn{padding:9px 18px;border:none;border-radius:9px;font-weight:700;font-size:.78rem;
+  cursor:pointer;transition:opacity .2s,transform .1s;font-family:'DM Sans',sans-serif;}
+.btn:hover{opacity:.85;transform:scale(.97);}
+.btn-orange{background:var(--orange);color:#000;}
+.btn-green{background:var(--green);color:#000;}
+.btn-ghost{background:rgba(255,255,255,.07);color:var(--text);}
+
+/* ══════════════════════════════
+   PAGE 1 — DASHBOARD
+══════════════════════════════ */
+.hdr{text-align:center;padding:10px 0 22px;}
+.hdr h1{font-family:'Syne',sans-serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:800;
+  background:linear-gradient(120deg,var(--orange),var(--gold));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;}
+.hdr .sub{font-size:.72rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:5px;}
+.badges{display:flex;justify-content:center;gap:7px;margin-top:10px;flex-wrap:wrap;}
+.badge{padding:3px 12px;border-radius:20px;font-size:.68rem;font-weight:600;border:1px solid;}
+.b1{background:rgba(249,115,22,.1);border-color:var(--orange);color:var(--orange);}
+.b2{background:rgba(139,92,246,.1);border-color:var(--violet);color:var(--violet);}
+.b3{background:rgba(34,197,94,.1);border-color:var(--green);color:var(--green);}
+
+/* Selection Probability Meter */
+.prob-card{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(234,179,8,.05));
+  border:1px solid rgba(249,115,22,.2);border-radius:14px;padding:20px;margin-bottom:14px;text-align:center;}
+.prob-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+.prob-ring{position:relative;width:130px;height:130px;margin:0 auto 12px;}
+.prob-ring svg{transform:rotate(-90deg);}
+.prob-ring circle{fill:none;stroke-width:10;stroke-linecap:round;}
+.ring-bg{stroke:rgba(255,255,255,.06);}
+.ring-fill{stroke:url(#ringGrad);stroke-dasharray:346;stroke-dashoffset:346;transition:stroke-dashoffset 1s ease;}
+.prob-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--gold);}
+.prob-msg{font-size:.8rem;color:var(--soft);margin-top:4px;}
+.prob-factors{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;text-align:left;}
+.pf{font-size:.72rem;color:var(--soft);padding:6px 10px;background:rgba(255,255,255,.03);border-radius:8px;}
+.pf span{color:var(--gold);font-weight:700;}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:14px;}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px 16px;position:relative;overflow:hidden;}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:11px 11px 0 0;}
+.sc1::before{background:linear-gradient(90deg,var(--orange),var(--gold));}
+.sc2::before{background:linear-gradient(90deg,var(--cyan),var(--sky));}
+.sc3::before{background:linear-gradient(90deg,var(--rose),var(--violet));}
+.sc4::before{background:linear-gradient(90deg,var(--green),var(--lime));}
+.sc5::before{background:linear-gradient(90deg,var(--violet),var(--cyan));}
+.slabel{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.sval{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:3px;}
+.sc1 .sval{color:var(--orange);}.sc2 .sval{color:var(--cyan);}.sc3 .sval{color:var(--rose);}
+.sc4 .sval{color:var(--green);}.sc5 .sval{color:var(--violet);}
+.starget{font-size:.63rem;color:var(--muted);}
+.sbar{margin-top:8px;height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;}
+.sfill{height:100%;border-radius:2px;transition:width .7s ease;}
+.sc1 .sfill{background:linear-gradient(90deg,var(--orange),var(--gold));}
+.sc2 .sfill{background:linear-gradient(90deg,var(--cyan),var(--sky));}
+.sc3 .sfill{background:linear-gradient(90deg,var(--rose),var(--violet));}
+.sc4 .sfill{background:linear-gradient(90deg,var(--green),var(--lime));}
+.sc5 .sfill{background:linear-gradient(90deg,var(--violet),var(--cyan));}
+
+/* Update form */
+.up-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
+.up-item label{display:block;font-size:.68rem;color:var(--soft);margin-bottom:4px;}
+.up-row{display:flex;gap:5px;}
+.up-row input{flex:1;padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid var(--border2);
+  border-radius:8px;color:var(--text);font-size:.82rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.up-row input:focus{border-color:var(--orange);}
+.up-row button{padding:8px 12px;border:none;border-radius:8px;background:var(--orange);color:#000;
+  font-weight:700;font-size:.72rem;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:opacity .2s;}
+.up-row button:hover{opacity:.85;}
+.save-ok{font-size:.67rem;color:var(--green);margin-top:8px;display:none;}
+
+/* ══════════════════════════════
+   PAGE 2 — STREAK
+══════════════════════════════ */
+.streak-hero{text-align:center;padding:16px 0 20px;}
+.streak-fire{font-size:3rem;margin-bottom:8px;}
+.streak-num{font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;color:var(--orange);line-height:1;}
+.streak-label{font-size:.75rem;color:var(--muted);margin-top:4px;}
+.streak-best{font-size:.78rem;color:var(--gold);margin-top:6px;}
+
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px;}
+.wday{text-align:center;font-size:.62rem;color:var(--muted);padding-bottom:4px;}
+.wdot{width:100%;aspect-ratio:1;border-radius:8px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;cursor:pointer;transition:all .2s;}
+.wdot.done{background:var(--orange);border-color:var(--orange);color:#000;}
+.wdot.today{border-color:var(--gold);border-width:2px;}
+.wdot:hover:not(.done){background:rgba(249,115,22,.15);}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-day{width:100%;aspect-ratio:1;border-radius:6px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);cursor:pointer;transition:all .15s;font-size:.65rem;
+  display:flex;align-items:center;justify-content:center;color:var(--muted);}
+.cal-day.done{background:rgba(249,115,22,.3);border-color:var(--orange);color:var(--orange);font-weight:700;}
+.cal-day.today{border-color:var(--gold);border-width:2px;color:var(--text);}
+.cal-day:hover:not(.done){background:rgba(249,115,22,.1);}
+.cal-month{font-size:.72rem;color:var(--muted);text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+
+/* ══════════════════════════════
+   PAGE 3 — MOCK TEST GRAPH
+══════════════════════════════ */
+.graph-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:16px;margin-bottom:14px;overflow:hidden;}
+.chart-area{position:relative;height:200px;margin-top:10px;}
+.chart-svg{width:100%;height:100%;overflow:visible;}
+.axis-label{font-size:.6rem;fill:var(--muted);}
+.grid-line{stroke:rgba(255,255,255,.04);stroke-width:1;}
+.data-line{fill:none;stroke:var(--orange);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.data-area{opacity:.15;}
+.data-dot{fill:var(--orange);stroke:var(--bg);stroke-width:2;cursor:pointer;transition:r .15s;}
+.data-dot:hover{r:7;}
+.target-line{stroke:var(--green);stroke-width:1.5;stroke-dasharray:5,3;opacity:.6;}
+
+.mock-log-form{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.mock-log-form input{flex:1;min-width:80px;padding:8px 10px;background:rgba(255,255,255,.04);
+  border:1px solid var(--border2);border-radius:8px;color:var(--text);
+  font-size:.82rem;font-family:'DM Sans',sans-serif;outline:none;}
+.mock-log-form input:focus{border-color:var(--orange);}
+
+.mock-list{max-height:200px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.mock-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;
+  border-radius:8px;margin-bottom:5px;background:rgba(255,255,255,.025);}
+.mock-item-date{font-size:.7rem;color:var(--muted);}
+.mock-item-score{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;}
+.mock-item-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85rem;padding:2px 6px;
+  border-radius:5px;transition:color .15s;}
+.mock-item-del:hover{color:var(--rose);}
+.score-green{color:var(--green);}
+.score-orange{color:var(--amber);}
+.score-red{color:var(--rose);}
+
+.mock-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.mstat{text-align:center;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;}
+.mstat-val{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;}
+.mstat-lbl{font-size:.65rem;color:var(--muted);margin-top:3px;}
+
+/* ══════════════════════════════
+   PAGE 4 — TYPING PRACTICE
+══════════════════════════════ */
+.typing-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.ttab{padding:7px 16px;border-radius:20px;font-size:.75rem;font-weight:600;
+  border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;}
+.ttab.active{background:var(--orange);border-color:var(--orange);color:#000;}
+
+.typing-passage{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;font-size:.9rem;line-height:1.9;margin-bottom:14px;
+  font-family:'Noto Sans Devanagari','DM Sans',sans-serif;min-height:80px;user-select:none;}
+.typing-passage .correct{color:var(--green);}
+.typing-passage .wrong{color:var(--rose);text-decoration:underline;}
+.typing-passage .current{background:var(--orange);color:#000;border-radius:2px;}
+.typing-passage .pending{color:var(--soft);}
+
+.typing-input{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);
+  border:1px solid var(--border2);border-radius:10px;color:var(--text);
+  font-size:.9rem;font-family:'Noto Sans Devanagari','DM Sans',sans-serif;
+  outline:none;resize:none;height:80px;transition:border-color .2s;}
+.typing-input:focus{border-color:var(--orange);}
+
+.typing-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.tstat{text-align:center;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:9px;}
+.tstat-val{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--orange);}
+.tstat-lbl{font-size:.6rem;color:var(--muted);margin-top:2px;}
+
+.typing-timer{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--gold);text-align:center;margin:8px 0;}
+
+/* ══════════════════════════════
+   PAGE 5 — TIMETABLE
+══════════════════════════════ */
+.tt-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);
+  box-shadow:0 8px 30px rgba(0,0,0,.4);}
+table{width:100%;border-collapse:collapse;background:var(--card);min-width:760px;}
+thead tr{background:#0a0a12;}
+th{padding:12px 13px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;
+  border-bottom:1px solid var(--border);text-align:left;color:var(--muted);}
+th:first-child{width:68px;text-align:center;color:var(--gold);}
+.th1{color:var(--amber);}.th2{color:var(--cyan);}.th3{color:#c084fc;}
+th .tsub{display:block;font-size:.58rem;font-weight:400;opacity:.5;margin-top:1px;}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;}
+tbody tr:hover{background:rgba(255,255,255,.015);}
+tbody tr:last-child{border-bottom:none;}
+td{padding:12px 13px;vertical-align:middle;}
+.dcell{text-align:center;}
+.dname{display:block;font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;}
+.den{display:block;font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:1px;}
+.cell{display:flex;flex-direction:column;gap:2px;}
+.topic{font-size:.76rem;color:rgba(255,255,255,.86);line-height:1.45;}
+.note{font-size:.62rem;color:var(--muted);margin-top:1px;}
+.tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
+.tag{padding:2px 7px;border-radius:6px;font-size:.58rem;font-weight:600;letter-spacing:.2px;}
+.tgs{background:rgba(249,115,22,.13);color:#fb923c;}
+.tcg{background:rgba(234,179,8,.13);color:#fbbf24;}
+.tmath{background:rgba(34,197,94,.13);color:#4ade80;}
+.treason{background:rgba(139,92,246,.13);color:#a78bfa;}
+.tlang{background:rgba(6,182,212,.13);color:#22d3ee;}
+.ttype{background:rgba(245,158,11,.13);color:#fcd34d;}
+.tcomp{background:rgba(244,63,94,.13);color:#fb7185;}
+.trev{background:rgba(255,255,255,.06);color:var(--muted);}
+.tsci{background:rgba(132,204,22,.13);color:#a3e635;}
+.tmock{background:rgba(34,197,94,.13);color:#4ade80;}
+.new-b{display:inline-block;padding:1px 5px;border-radius:4px;font-size:.55rem;font-weight:700;
+  background:rgba(34,197,94,.2);color:var(--green);margin-left:3px;vertical-align:middle;}
+.sun-row{background:rgba(255,215,0,.015);}
+.sun-row .dname{color:var(--gold);}
+.rest-td{text-align:center;color:var(--muted);font-size:.74rem;font-style:italic;line-height:1.6;}
+
+/* Syllabus chips */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.chip{padding:5px 12px;border-radius:16px;font-size:.7rem;font-weight:500;border:1px solid;cursor:pointer;
+  transition:all .2s;user-select:none;display:flex;align-items:center;gap:4px;}
+.chip.done{opacity:1;}.chip.undone{opacity:.38;}
+.cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.chip-gs{border-color:rgba(249,115,22,.4);color:var(--orange);} .chip-gs .cdot{background:var(--orange);}
+.chip-cg{border-color:rgba(234,179,8,.4);color:var(--gold);}   .chip-cg .cdot{background:var(--gold);}
+.chip-cp{border-color:rgba(244,63,94,.4);color:var(--rose);}   .chip-cp .cdot{background:var(--rose);}
+.chip-mt{border-color:rgba(34,197,94,.4);color:var(--green);}  .chip-mt .cdot{background:var(--green);}
+.chip-rs{border-color:rgba(139,92,246,.4);color:var(--violet);}  .chip-rs .cdot{background:var(--violet);}
+.chip-ln{border-color:rgba(6,182,212,.4);color:var(--cyan);}   .chip-ln .cdot{background:var(--cyan);}
+.chip-sc{border-color:rgba(132,204,22,.4);color:var(--lime);}  .chip-sc .cdot{background:var(--lime);}
+
+/* ══ SYLLABUS MAP ══ */
+.sylmap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.sylmap h3{font-family:'Syne',sans-serif;font-size:.9rem;color:var(--text);margin-bottom:14px;}
+.smap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+.smap-block{padding:12px 14px;background:rgba(255,255,255,.02);border-radius:10px;border:1px solid var(--border);}
+.smap-head{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.smap-head span{font-size:.62rem;font-weight:400;opacity:.55;}
+.smap-item{font-size:.72rem;color:var(--soft);padding:2px 0 2px 13px;position:relative;line-height:1.55;}
+.smap-item::before{content:'·';position:absolute;left:2px;color:var(--muted);}
+.smap-item.hi{color:var(--green);}
+.smap-item.hi::before{content:'✓';color:var(--green);font-size:.63rem;}
+
+/* ══ EXAM TIPS ══ */
+.tips-box{background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.16);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.tips-box h3{color:var(--orange);font-size:.74rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;}
+.tip{font-size:.74rem;color:rgba(255,255,255,.58);padding-left:14px;position:relative;line-height:1.55;}
+.tip::before{content:'▸';position:absolute;left:0;color:var(--orange);}
+
+/* ══════ RESPONSIVE ══════ */
+@media(max-width:480px){
+  .typing-stats{grid-template-columns:repeat(2,1fr);}
+  .mock-stats-row{grid-template-columns:repeat(3,1fr);}
+  .prob-factors{grid-template-columns:1fr;}
+  .smap-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('dashboard')">🏠 Dashboard</button>
+  <button class="nav-btn" onclick="showPage('streak')">🔥 Streak</button>
+  <button class="nav-btn" onclick="showPage('mock')">📊 Mock Tests</button>
+  <button class="nav-btn" onclick="showPage('typing')">⌨️ Typing</button>
+  <button class="nav-btn" onclick="showPage('timetable')">📅 Timetable</button>
+</nav>
+
+<!-- ══════════════════════════════
+     PAGE 1: DASHBOARD
+══════════════════════════════ -->
+<div id="page-dashboard" class="page active">
+  <div class="hdr">
+    <h1>📚 CGVyapam 2026</h1>
+    <p class="sub">DEO & Sahayak Grade-03 Prep App</p>
+    <div class="badges">
+      <span class="badge b1">🖥️ DEO</span>
+      <span class="badge b2">📋 Grade-03</span>
+      <span class="badge b3" id="db-streak-badge">🔥 0 Day Streak</span>
+    </div>
+  </div>
+
+  <!-- Selection Probability -->
+  <div class="prob-card">
+    <div class="prob-label">🎯 Selection Probability Meter</div>
+    <div class="prob-ring">
+      <svg viewBox="0 0 120 120" width="130" height="130">
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:var(--orange)"/>
+            <stop offset="100%" style="stop-color:var(--gold)"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-bg" cx="60" cy="60" r="55" />
+        <circle class="ring-fill" id="prob-ring" cx="60" cy="60" r="55" />
+      </svg>
+      <div class="prob-num" id="prob-pct">0%</div>
+    </div>
+    <div class="prob-msg" id="prob-msg">Padhai shuru karo — probability badhegi! 💪</div>
+    <div class="prob-factors">
+      <div class="pf">📖 Study hrs <span id="pf-hrs">0h</span></div>
+      <div class="pf">⌨️ Typing <span id="pf-wpm">0 WPM</span></div>
+      <div class="pf">📝 Mock avg <span id="pf-mock">0%</span></div>
+      <div class="pf">🔥 Streak <span id="pf-streak">0 days</span></div>
+      <div class="pf">✅ Syllabus <span id="pf-syllabus">0%</span></div>
+      <div class="pf">🖥️ Computer <span id="pf-comp">0%</span></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="scard sc1"><div class="slabel">Study Hours</div><div class="sval" id="v-hrs">0<span style="font-size:.85rem">h</span></div><div class="starget">Target: 5h/day</div><div class="sbar"><div class="sfill" id="b-hrs" style="width:0%"></div></div></div>
+    <div class="scard sc2"><div class="slabel">Typing WPM</div><div class="sval" id="v-wpm">0<span style="font-size:.8rem"> WPM</span></div><div class="starget">Target: 35 WPM</div><div class="sbar"><div class="sfill" id="b-wpm" style="width:0%"></div></div></div>
+    <div class="scard sc3"><div class="slabel">Mock Score</div><div class="sval" id="v-mock">0<span style="font-size:.8rem">%</span></div><div class="starget">Target: 75%+</div><div class="sbar"><div class="sfill" id="b-mock" style="width:0%"></div></div></div>
+    <div class="scard sc4"><div class="slabel">Syllabus</div><div class="sval" id="v-syl">0<span style="font-size:.8rem">%</span></div><div class="starget">Target: 100%</div><div class="sbar"><div class="sfill" id="b-syl" style="width:0%"></div></div></div>
+    <div class="scard sc5"><div class="slabel">Computer MCQ</div><div class="sval" id="v-comp">0<span style="font-size:.8rem">%</span></div><div class="starget">Target: 80%+</div><div class="sbar"><div class="sfill" id="b-comp" style="width:0%"></div></div></div>
+  </div>
+
+  <!-- Update -->
+  <div class="card">
+    <div class="sec-title">📊 Daily Progress Update</div>
+    <div class="up-grid">
+      <div class="up-item"><label>Study Hours</label><div class="up-row"><input type="number" id="i-hrs" placeholder="e.g. 4" min="0" max="12"><button onclick="saveS('hrs')">Save</button></div></div>
+      <div class="up-item"><label>Typing WPM</label><div class="up-row"><input type="number" id="i-wpm" placeholder="e.g. 28"><button onclick="saveS('wpm')">Save</button></div></div>
+      <div class="up-item"><label>Mock Score %</label><div class="up-row"><input type="number" id="i-mock" placeholder="e.g. 65"><button onclick="saveS('mock')">Save</button></div></div>
+      <div class="up-item"><label>Computer MCQ %</label><div class="up-row"><input type="number" id="i-comp" placeholder="e.g. 70"><button onclick="saveS('comp')">Save</button></div></div>
+    </div>
+    <div class="save-ok" id="save-ok">✓ Saved! Data browser mein store ho gaya.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE 2: STREAK
+══════════════════════════════ -->
+<div id="page-streak" class="page">
+  <div class="page-title">🔥 Study Streak</div>
+  <div class="page-sub">Har din padho, streak badhao — consistency hi selection hai</div>
+
+  <div class="card">
+    <div class="streak-hero">
+      <div class="streak-fire">🔥</div>
+      <div class="streak-num" id="streak-num">0</div>
+      <div class="streak-label">Day Streak</div>
+      <div class="streak-best" id="streak-best">Best: 0 days</div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-orange" onclick="markToday()">✓ Aaj Padha!</button>
+      <button class="btn btn-ghost" onclick="resetStreak()">Reset</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title">Is Hafte ki Activity</div>
+    <div class="week-grid" id="week-labels"></div>
+    <div class="week-grid" id="week-dots"></div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title" id="cal-month-title">March 2026 – Daily Calendar</div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div style="font-size:.67rem;color:var(--muted);margin-top:8px;">Kisi bhi din pe click karo — toggle done/undone</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE 3: MOCK TEST GRAPH
+══════════════════════════════ -->
+<div id="page-mock" class="page">
+  <div class="page-title">📊 Mock Test Analysis</div>
+  <div class="page-sub">Apni progress track karo — graph khud banayega</div>
+
+  <div class="mock-stats-row">
+    <div class="mstat"><div class="mstat-val" id="mg-avg" style="color:var(--cyan)">—</div><div class="mstat-lbl">Average</div></div>
+    <div class="mstat"><div class="mstat-val" id="mg-best" style="color:var(--green)">—</div><div class="mstat-lbl">Best</div></div>
+    <div class="mstat"><div class="mstat-val" id="mg-last" style="color:var(--orange)">—</div><div class="mstat-lbl">Latest</div></div>
+  </div>
+
+  <div class="graph-wrap">
+    <div class="sec-title">Score Trend</div>
+    <div class="chart-area">
+      <svg class="chart-svg" id="mock-chart" viewBox="0 0 400 200" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title">Naya Score Add Karo</div>
+    <div class="mock-log-form">
+      <input type="number" id="mock-score-input" placeholder="Score % (e.g. 68)" min="0" max="100">
+      <input type="text" id="mock-label-input" placeholder="Subject (e.g. GS)" style="max-width:120px;">
+      <button class="btn btn-orange" onclick="addMockScore()">Add</button>
+    </div>
+    <div class="sec-title" style="margin-top:4px;">Score History</div>
+    <div class="mock-list" id="mock-list"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE 4: TYPING PRACTICE
+══════════════════════════════ -->
+<div id="page-typing" class="page">
+  <div class="page-title">⌨️ Typing Practice</div>
+  <div class="page-sub">English aur Hindi dono practice karo — WPM badhao</div>
+
+  <div class="typing-tabs">
+    <button class="ttab active" onclick="setTypingLang('en',this)">🇬🇧 English</button>
+    <button class="ttab" onclick="setTypingLang('hi',this)">🇮🇳 Hindi</button>
+  </div>
+
+  <div class="typing-stats">
+    <div class="tstat"><div class="tstat-val" id="t-wpm">0</div><div class="tstat-lbl">WPM</div></div>
+    <div class="tstat"><div class="tstat-val" id="t-acc" style="color:var(--green)">100%</div><div class="tstat-lbl">Accuracy</div></div>
+    <div class="tstat"><div class="tstat-val" id="t-chars" style="color:var(--cyan)">0</div><div class="tstat-lbl">Chars</div></div>
+    <div class="tstat"><div class="tstat-val" id="t-errs" style="color:var(--rose)">0</div><div class="tstat-lbl">Errors</div></div>
+  </div>
+
+  <div class="typing-timer" id="t-timer">01:00</div>
+
+  <div class="typing-passage" id="typing-passage"></div>
+  <textarea class="typing-input" id="typing-input" placeholder="Yahan type karna shuru karo..." 
+    oninput="handleTyping()" spellcheck="false" autocorrect="off" autocomplete="off"></textarea>
+
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+    <button class="btn btn-orange" onclick="startTyping()">▶ Start / New Passage</button>
+    <button class="btn btn-ghost" onclick="resetTyping()">↺ Reset</button>
+    <button class="btn btn-green" onclick="saveTypingResult()" id="save-wpm-btn" style="display:none">💾 WPM Save karo</button>
+  </div>
+  <div style="font-size:.68rem;color:var(--muted);margin-top:8px;" id="typing-msg"></div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="sec-title">Best Scores</div>
+    <div id="typing-history" style="font-size:.78rem;color:var(--soft);"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE 5: TIMETABLE
+══════════════════════════════ -->
+<div id="page-timetable" class="page">
+  <div class="page-title">📅 Study Timetable</div>
+  <div class="page-sub">CGVyapam 2026 Official Syllabus Aligned</div>
+
+  <div class="tt-wrap">
+  <table>
+  <thead><tr>
+    <th>दिन</th>
+    <th style="color:rgba(255,255,255,.28)">🌄 6:30–7:00<span class="tsub">Quick Rev.</span></th>
+    <th class="th1">🌅 7:00–10:00 AM<span class="tsub">GS / GK</span></th>
+    <th class="th2">☀️ 2:00–4:00 PM<span class="tsub">Typing</span></th>
+    <th class="th3">🌆 6:00–9:00 PM<span class="tsub">Logic & Language</span></th>
+  </tr></thead>
+  <tbody>
+  <tr>
+    <td class="dcell"><span class="dname">सोम</span><span class="den">Mon</span></td>
+    <td><div class="cell"><span class="topic">Kal ke notes revise karo</span><div class="tags"><span class="tag trev">Revision</span></div></div></td>
+    <td><div class="cell"><span class="topic">CG इतिहास – प्राचीन काल</span><span class="note">कलचुरि · मराठा · CG का स्वतंत्रता योगदान</span><div class="tags"><span class="tag tcg">CG GK</span></div></div></td>
+    <td><div class="cell"><span class="topic">English Typing – Home Row Keys</span><span class="note">Target: 20 WPM accuracy first</span><div class="tags"><span class="tag ttype">Typing</span></div></div></td>
+    <td><div class="cell"><span class="topic">Maths: Number System + LCM/HCF</span><span class="topic" style="margin-top:4px">Hindi Vyakaran – Sandhi/Samas</span><div class="tags"><span class="tag tmath">Maths</span><span class="tag tlang">Hindi</span></div></div></td>
+  </tr>
+  <tr>
+    <td class="dcell"><span class="dname">मंगल</span><span class="den">Tue</span></td>
+    <td><div class="cell"><span class="topic">CG Itihas revise karo</span><div class="tags"><span class="tag trev">Revision</span></div></div></td>
+    <td><div class="cell"><span class="topic">CG भूगोल + जनजातियां <span class="new-b">NEW</span></span><span class="note">महानदी · बस्तर · गोंड/बैगा · तीज-त्यौहार</span><div class="tags"><span class="tag tcg">CG GK</span><span class="tag tcg">Janjatiya</span></div></div></td>
+    <td><div class="cell"><span class="topic">Hindi Typing – Basic Keys + Matras</span><span class="note">Remington / Inscript layout</span><div class="tags"><span class="tag ttype">Typing</span></div></div></td>
+    <td><div class="cell"><span class="topic">Reasoning: Coding-Decoding + Series + Analogy</span><span class="topic" style="margin-top:4px">English Grammar – Tenses</span><div class="tags"><span class="tag treason">Reasoning</span><span class="tag tlang">English</span></div></div></td>
+  </tr>
+  <tr>
+    <td class="dcell"><span class="dname">बुध</span><span class="den">Wed</span></td>
+    <td><div class="cell"><span class="topic">Janjatiya points revise karo</span><div class="tags"><span class="tag trev">Revision</span></div></div></td>
+    <td><div class="cell"><span class="topic">भारत का इतिहास – आधुनिक काल</span><span class="note">1857 · Gandhi · Swatantrata Andolan</span><div class="tags"><span class="tag tgs">GS History</span></div></div></td>
+    <td><div class="cell"><span class="topic">English Typing – Speed Building</span><span class="note">Target: 30 WPM + 90% accuracy</span><div class="tags"><span class="tag ttype">Typing</span></div></div></td>
+    <td><div class="cell"><span class="topic">Computer: MS Word + Excel + Antivirus <span class="new-b">NEW</span></span><span class="note">Virus types · OS basics · CD/DVD</span><div class="tags"><span class="tag tcomp">Computer</span></div></div></td>
+  </tr>
+  <tr>
+    <td class="dcell"><span class="dname">गुरु</span><span class="den">Thu</span></td>
+    <td><div class="cell"><span class="topic">Modern history revise karo</span><div class="tags"><span class="tag trev">Revision</span></div></div></td>
+    <td><div class="cell"><span class="topic">सामान्य विज्ञान + पर्यावरण <span class="new-b">NEW</span></span><span class="note">Physics/Bio basics · Ecology · Pollution</span><div class="tags"><span class="tag tsci">Science</span><span class="tag tsci">Environment</span></div></div></td>
+    <td><div class="cell"><span class="topic">Hindi Typing – Words & Short Phrases</span><span class="note">Common Vyapam passage practice</span><div class="tags"><span class="tag ttype">Typing</span></div></div></td>
+    <td><div class="cell"><span class="topic">Maths: Percentage + Average + Profit-Loss</span><span class="topic" style="margin-top:4px">English Grammar – Voice/Narration</span><div class="tags"><span class="tag tmath">Maths</span><span class="tag tlang">English</span></div></div></td>
+  </tr>
+  <tr>
+    <td class="dcell"><span class="dname">शुक्र</span><span class="den">Fri</span></td>
+    <td><div class="cell"><span class="topic">Science & Paryavaran revise karo</span><div class="tags"><span class="tag trev">Revision</span></div></div></td>
+    <td><div class="cell"><span class="topic">भारतीय संविधान + CG प्रशासन + पंचायती राज</span><span class="note">Mulik Adhikar · 73rd Amendment</span><div class="tags"><span class="tag tgs">Constitution</span><span class="tag tcg">CG Polity</span></div></div></td>
+    <td><div class="cell"><span class="topic">Mixed Typing – Full Paragraphs (En + Hi)</span><span class="note">10-min exam simulation</span><div class="tags"><span class="tag ttype">Typing</span></div></div></td>
+    <td><div class="cell"><span class="topic">Maths: Speed-Time-Distance + Simple Interest <span class="new-b">NEW</span></span><span class="topic" style="margin-top:4px">Reasoning: Syllogism + Blood Relations</span><div class="tags"><span class="tag tmath">Maths</span><span class="tag treason">Reasoning</span></div></div></td>
+  </tr>
+  <tr>
+    <td class="dcell"><span class="dname">शनि</span><span class="den">Sat</span></td>
+    <td><div class="cell"><span class="topic">Hafte ka sabse weak topic revise karo</span><div class="tags"><span class="tag trev">Weekly Rev.</span></div></div></td>
+    <td><div class="cell"><span class="topic">Current Affairs + CG Arthvyavastha/Van/Khaniij <span class="new-b">NEW</span></span><span class="note">Industries · Hasdeo coal · Bauxite · Agriculture</span><div class="tags"><span class="tag tgs">Current Affairs</span><span class="tag tcg">CG Economy</span></div></div></td>
+    <td><div class="cell"><span class="topic">Mock Typing Test – Full 15 Min</span><span class="note">WPM + Accuracy record karo</span><div class="tags"><span class="tag ttype">Mock Test</span></div></div></td>
+    <td><div class="cell"><span class="topic">Vyapam Computer MCQs (50 Qs) + OS/Internet/Multimedia</span><span class="topic" style="margin-top:4px">Maths: Square Root + Fractions</span><div class="tags"><span class="tag tcomp">Computer MCQ</span><span class="tag tmath">Maths</span></div></div></td>
+  </tr>
+  <tr class="sun-row">
+    <td class="dcell"><span class="dname">रवि</span><span class="den">Sun</span></td>
+    <td><div class="cell"><span class="topic">Sabse weak subject 30 min</span><div class="tags"><span class="tag trev">Weak Topic</span></div></div></td>
+    <td><div class="cell"><span class="topic">CG Sahitya, Sanskriti, Muhavare <span class="new-b">NEW</span></span><span class="note">Janula · Hana · Lokottiyan · Lok Nritya</span><div class="tags"><span class="tag tcg">CG Culture</span></div></div></td>
+    <td class="rest-td">😴 Aram karo<br><small>Agle hafte ki planning</small></td>
+    <td><div class="cell"><span class="topic">Full Mock Test (GS+Reasoning+Computer+Maths)</span><span class="topic" style="margin-top:4px">Score analyze + Next week plan</span><div class="tags"><span class="tag tmock">Full Mock</span><span class="tag trev">Plan</span></div></div></td>
+  </tr>
+  </tbody>
+  </table>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="sec-title">✅ Syllabus Topics – Click = Done toggle</div>
+    <div class="chips" id="chips-tt">
+      <div class="chip chip-gs undone" data-id="gs1" onclick="toggleChip(this)"><div class="cdot"></div>Bharat Itihas</div>
+      <div class="chip chip-gs undone" data-id="gs2" onclick="toggleChip(this)"><div class="cdot"></div>Bharat Bhugol</div>
+      <div class="chip chip-gs undone" data-id="gs3" onclick="toggleChip(this)"><div class="cdot"></div>Samvidhan</div>
+      <div class="chip chip-gs undone" data-id="gs4" onclick="toggleChip(this)"><div class="cdot"></div>Arthvyavastha</div>
+      <div class="chip chip-sc undone" data-id="gs5" onclick="toggleChip(this)"><div class="cdot"></div>Samanya Vigyan ✨</div>
+      <div class="chip chip-sc undone" data-id="gs6" onclick="toggleChip(this)"><div class="cdot"></div>Paryavaran ✨</div>
+      <div class="chip chip-gs undone" data-id="gs7" onclick="toggleChip(this)"><div class="cdot"></div>Current Affairs</div>
+      <div class="chip chip-cg undone" data-id="cg1" onclick="toggleChip(this)"><div class="cdot"></div>CG Itihas</div>
+      <div class="chip chip-cg undone" data-id="cg2" onclick="toggleChip(this)"><div class="cdot"></div>CG Bhugol</div>
+      <div class="chip chip-cg undone" data-id="cg3" onclick="toggleChip(this)"><div class="cdot"></div>CG Sanskriti ✨</div>
+      <div class="chip chip-cg undone" data-id="cg4" onclick="toggleChip(this)"><div class="cdot"></div>CG Janjatiya ✨</div>
+      <div class="chip chip-cg undone" data-id="cg5" onclick="toggleChip(this)"><div class="cdot"></div>CG Economy ✨</div>
+      <div class="chip chip-cg undone" data-id="cg6" onclick="toggleChip(this)"><div class="cdot"></div>CG Prashasan</div>
+      <div class="chip chip-cg undone" data-id="cg7" onclick="toggleChip(this)"><div class="cdot"></div>CG Khaniij ✨</div>
+      <div class="chip chip-cp undone" data-id="cp1" onclick="toggleChip(this)"><div class="cdot"></div>Computer Basics</div>
+      <div class="chip chip-cp undone" data-id="cp2" onclick="toggleChip(this)"><div class="cdot"></div>MS Office</div>
+      <div class="chip chip-cp undone" data-id="cp3" onclick="toggleChip(this)"><div class="cdot"></div>Internet & Email</div>
+      <div class="chip chip-cp undone" data-id="cp4" onclick="toggleChip(this)"><div class="cdot"></div>Antivirus ✨</div>
+      <div class="chip chip-cp undone" data-id="cp5" onclick="toggleChip(this)"><div class="cdot"></div>OS & Multimedia ✨</div>
+      <div class="chip chip-mt undone" data-id="mt1" onclick="toggleChip(this)"><div class="cdot"></div>Number System</div>
+      <div class="chip chip-mt undone" data-id="mt2" onclick="toggleChip(this)"><div class="cdot"></div>Percentage</div>
+      <div class="chip chip-mt undone" data-id="mt3" onclick="toggleChip(this)"><div class="cdot"></div>Profit-Loss</div>
+      <div class="chip chip-mt undone" data-id="mt4" onclick="toggleChip(this)"><div class="cdot"></div>Speed-Time-Dist ✨</div>
+      <div class="chip chip-mt undone" data-id="mt5" onclick="toggleChip(this)"><div class="cdot"></div>Simple Interest ✨</div>
+      <div class="chip chip-mt undone" data-id="mt6" onclick="toggleChip(this)"><div class="cdot"></div>Square Root ✨</div>
+      <div class="chip chip-rs undone" data-id="rs1" onclick="toggleChip(this)"><div class="cdot"></div>Coding-Decoding</div>
+      <div class="chip chip-rs undone" data-id="rs2" onclick="toggleChip(this)"><div class="cdot"></div>Analogy</div>
+      <div class="chip chip-rs undone" data-id="rs3" onclick="toggleChip(this)"><div class="cdot"></div>Blood Relations</div>
+      <div class="chip chip-rs undone" data-id="rs4" onclick="toggleChip(this)"><div class="cdot"></div>Syllogism</div>
+      <div class="chip chip-ln undone" data-id="ln1" onclick="toggleChip(this)"><div class="cdot"></div>Hindi Vyakaran</div>
+      <div class="chip chip-ln undone" data-id="ln2" onclick="toggleChip(this)"><div class="cdot"></div>English Grammar</div>
+      <div class="chip chip-ln undone" data-id="ln3" onclick="toggleChip(this)"><div class="cdot"></div>En Typing 30 WPM</div>
+      <div class="chip chip-ln undone" data-id="ln4" onclick="toggleChip(this)"><div class="cdot"></div>Hi Typing 25 WPM</div>
+    </div>
+    <div style="font-size:.65rem;color:var(--muted);margin-top:8px;">✨ = Naye topics jo pehle missing the · Click = Done/Undone toggle</div>
+  </div>
+
+  <!-- SYLLABUS MAP -->
+  <div class="sylmap">
+    <h3>📋 Official Syllabus vs Timetable Coverage</h3>
+    <div class="smap-grid">
+      <div class="smap-block">
+        <div class="smap-head" style="color:var(--amber)">📘 Bharat GS <span>(50 marks · 50 Qs)</span></div>
+        <div class="smap-item hi">Bharat ka Itihas & Swatantrata ✓</div>
+        <div class="smap-item hi">Bharat ka Bhugol ✓</div>
+        <div class="smap-item hi">Samvidhan & Rajvyavastha ✓</div>
+        <div class="smap-item hi">Bharat ki Arthvyavastha ✓</div>
+        <div class="smap-item hi">Samanya Vigyan & Technology ✓ NEW</div>
+        <div class="smap-item hi">Paryavaran ✓ NEW</div>
+        <div class="smap-item hi">Khelkood & Samsamayik ✓</div>
+      </div>
+      <div class="smap-block">
+        <div class="smap-head" style="color:var(--gold)">🏛️ CG GK <span>(Part of GS)</span></div>
+        <div class="smap-item hi">CG Itihas & Swatantrata ✓</div>
+        <div class="smap-item hi">CG Bhugol & Janganana ✓</div>
+        <div class="smap-item hi">CG Sahitya, Nritya, Sanskriti ✓ NEW</div>
+        <div class="smap-item hi">CG Janjatiya & Teej-Tyohar ✓ NEW</div>
+        <div class="smap-item hi">CG Arthvyavastha, Van, Krishi ✓ NEW</div>
+        <div class="smap-item hi">CG Prashasan & Panchayat ✓</div>
+        <div class="smap-item hi">CG Udyog, Urja, Khaniij ✓ NEW</div>
+        <div class="smap-item hi">CG Current Affairs ✓</div>
+      </div>
+      <div class="smap-block">
+        <div class="smap-head" style="color:var(--rose)">🖥️ Computer <span>(30 marks · 30 Qs)</span></div>
+        <div class="smap-item hi">Computer use & CPU parts ✓</div>
+        <div class="smap-item hi">MS Word, Excel, PowerPoint ✓</div>
+        <div class="smap-item hi">Internet, Email, Search Engine ✓</div>
+        <div class="smap-item hi">Antivirus & Virus ✓ NEW</div>
+        <div class="smap-item hi">Operating System (DOS etc) ✓ NEW</div>
+        <div class="smap-item hi">Multimedia, CD/DVD ✓ NEW</div>
+        <div class="smap-item hi">Printer Types ✓ NEW</div>
+      </div>
+      <div class="smap-block">
+        <div class="smap-head" style="color:var(--violet)">🧠 Reasoning <span>(30 marks · 30 Qs)</span></div>
+        <div class="smap-item hi">Coding-Decoding & Series ✓</div>
+        <div class="smap-item hi">Analogy & Odd One Out ✓</div>
+        <div class="smap-item hi">Blood Relations ✓</div>
+        <div class="smap-item hi">Syllogism & Patterns ✓</div>
+        <div class="smap-item hi">Number & Letter Series ✓</div>
+      </div>
+      <div class="smap-block">
+        <div class="smap-head" style="color:var(--green)">🔢 Maths <span>(30 marks · 30 Qs)</span></div>
+        <div class="smap-item hi">Number System & LCM/HCF ✓</div>
+        <div class="smap-item hi">Percentage & Average ✓</div>
+        <div class="smap-item hi">Profit-Loss ✓</div>
+        <div class="smap-item hi">Speed, Time & Distance ✓ NEW</div>
+        <div class="smap-item hi">Simple Interest ✓ NEW</div>
+        <div class="smap-item hi">Square Root & Fractions ✓ NEW</div>
+      </div>
+      <div class="smap-block">
+        <div class="smap-head" style="color:var(--cyan)">⌨️ Typing <span>(Skill Test)</span></div>
+        <div class="smap-item hi">English Typing – 30 WPM ✓</div>
+        <div class="smap-item hi">Hindi Typing – 25 WPM ✓</div>
+        <div class="smap-item hi">Weekly Mock Test ✓</div>
+        <div class="smap-item hi">Accuracy tracking ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAM STRATEGY TIPS -->
+  <div class="tips-box">
+    <h3>⚡ CGVyapam DEO/Grade-03 — Exam Strategy</h3>
+    <div class="tips-grid">
+      <div class="tip">Paper 140 marks ka hai: GS 50 + Computer 30 + Reasoning 30 + Maths 30. Sabse zyada marks GS mein hain — ise seriously lo.</div>
+      <div class="tip">CG Special GK timetable mein fully cover hai — janjatiya, sanskriti, khaniij, van, muhavare sab include hain.</div>
+      <div class="tip">Samanya Vigyan aur Paryavaran naya addition hai — yahan se 4–6 questions aate hain, ignore mat karna.</div>
+      <div class="tip">Computer mein Antivirus, OS, Multimedia, Printer types — ye sab official syllabus mein hain, MCQ pakka aate hain.</div>
+      <div class="tip">Maths mein Speed-Time-Distance aur Simple Interest — ye topics pehle timetable mein nahi the, ab fully included hain.</div>
+      <div class="tip">English Typing 30 WPM + Hindi Typing 25 WPM — skill test qualify karna mandatory hai, daily practice karo.</div>
+      <div class="tip">Upar chips click karte jao jab topic complete ho — syllabus coverage % automatically update hoga dashboard mein.</div>
+      <div class="tip">Sunday dopehar mein pakka aram karo — brain ko reset time chahiye. Overload se performance girti hai.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════
+// STORAGE HELPERS
+// ══════════════════════════════
+const LS = {
+  get:(k,d)=>{ try{ const v=localStorage.getItem(k); return v!==null?JSON.parse(v):d; }catch(e){return d;} },
+  set:(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+
+// ══════════════════════════════
+// NAV
+// ══════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if(id==='streak') renderStreak();
+  if(id==='mock') renderMockChart();
+  if(id==='typing') loadTypingHistory();
+}
+
+// ══════════════════════════════
+// STATS & PROBABILITY
+// ══════════════════════════════
+const SCFG = {
+  hrs: {target:5, vi:'v-hrs', bi:'b-hrs', k:'cgv_hrs', sfx:'h'},
+  wpm: {target:35, vi:'v-wpm', bi:'b-wpm', k:'cgv_wpm', sfx:' WPM'},
+  mock:{target:75, vi:'v-mock', bi:'b-mock', k:'cgv_mock', sfx:'%'},
+  syl: {target:100,vi:'v-syl', bi:'b-syl', k:'cgv_syl', sfx:'%'},
+  comp:{target:80, vi:'v-comp',bi:'b-comp', k:'cgv_comp', sfx:'%'}
+};
+
+function renderStat(t,v){
+  const c=SCFG[t],n=parseFloat(v)||0;
+  document.getElementById(c.vi).innerHTML=n+'<span style="font-size:.8rem">'+c.sfx+'</span>';
+  document.getElementById(c.bi).style.width=Math.min((n/c.target)*100,100)+'%';
+}
+
+function saveS(t){
+  const c=SCFG[t],v=document.getElementById('i-'+t).value;
+  if(v==='') return;
+  LS.set(c.k,parseFloat(v));
+  renderStat(t,v);
+  document.getElementById('i-'+t).value='';
+  const ok=document.getElementById('save-ok');
+  ok.style.display='block';
+  clearTimeout(window._st); window._st=setTimeout(()=>ok.style.display='none',2500);
+  updateProb();
+}
+
+function updateProb(){
+  const hrs=LS.get('cgv_hrs',0), wpm=LS.get('cgv_wpm',0),
+        mock=LS.get('cgv_mock',0), syl=LS.get('cgv_syl',0),
+        comp=LS.get('cgv_comp',0), streak=LS.get('cgv_streak',0);
+
+  const scores=[
+    Math.min(hrs/5,1)*20,
+    Math.min(wpm/35,1)*20,
+    Math.min(mock/75,1)*25,
+    Math.min(syl/100,1)*20,
+    Math.min(comp/80,1)*10,
+    Math.min(streak/30,1)*5
+  ];
+  const total=Math.round(scores.reduce((a,b)=>a+b,0));
+
+  const circum=2*Math.PI*55;
+  const offset=circum-(circum*total/100);
+  document.getElementById('prob-ring').style.strokeDashoffset=offset;
+  document.getElementById('prob-pct').textContent=total+'%';
+
+  const msgs=['Padhai shuru karo — probability badhegi! 💪',
+    'Shuruaat ho gayi — jari rakho! 🌱','Achhi progress hai bhai! 🔥',
+    'Bahut badhiya! Selection ke kareeb! 🎯','Ekdum on track — selection pakka! 🏆'];
+  document.getElementById('prob-msg').textContent=msgs[Math.floor(total/25)>4?4:Math.floor(total/25)];
+
+  document.getElementById('pf-hrs').textContent=hrs+'h';
+  document.getElementById('pf-wpm').textContent=wpm+' WPM';
+  document.getElementById('pf-mock').textContent=mock+'%';
+  document.getElementById('pf-streak').textContent=streak+' days';
+  document.getElementById('pf-syllabus').textContent=syl+'%';
+  document.getElementById('pf-comp').textContent=comp+'%';
+}
+
+// ══════════════════════════════
+// STREAK
+// ══════════════════════════════
+function renderStreak(){
+  const streak=LS.get('cgv_streak',0), best=LS.get('cgv_best',0);
+  document.getElementById('streak-num').textContent=streak;
+  document.getElementById('streak-best').textContent='Best: '+best+' days';
+  document.getElementById('db-streak-badge').textContent='🔥 '+streak+' Day Streak';
+
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const wl=document.getElementById('week-labels');
+  const wd=document.getElementById('week-dots');
+  wl.innerHTML=''; wd.innerHTML='';
+  const today=new Date(), todayDay=today.getDay();
+  const weekDone=LS.get('cgv_week',[false,false,false,false,false,false,false]);
+  days.forEach((d,i)=>{
+    const lbl=document.createElement('div'); lbl.className='wday'; lbl.textContent=d; wl.appendChild(lbl);
+    const dot=document.createElement('div');
+    dot.className='wdot'+(weekDone[i]?' done':'')+(i===todayDay?' today':'');
+    dot.textContent=weekDone[i]?'✓':'';
+    dot.onclick=()=>{ weekDone[i]=!weekDone[i]; LS.set('cgv_week',weekDone); renderStreak(); };
+    wd.appendChild(dot);
+  });
+
+  // Calendar
+  const now=new Date(), yr=now.getFullYear(), mo=now.getMonth();
+  document.getElementById('cal-month-title').textContent=
+    now.toLocaleString('en',{month:'long'})+' '+yr+' – Daily Calendar';
+  const calDone=LS.get('cgv_cal_'+yr+'_'+mo,{});
+  const firstDay=new Date(yr,mo,1).getDay(), daysInMonth=new Date(yr,mo+1,0).getDate();
+  const cg=document.getElementById('cal-grid'); cg.innerHTML='';
+  for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.style.opacity='0';cg.appendChild(e);}
+  for(let d=1;d<=daysInMonth;d++){
+    const el=document.createElement('div');
+    el.className='cal-day'+(calDone[d]?' done':'')+(d===now.getDate()?' today':'');
+    el.textContent=d;
+    el.onclick=()=>{ calDone[d]=!calDone[d]; LS.set('cgv_cal_'+yr+'_'+mo,calDone); renderStreak(); };
+    cg.appendChild(el);
+  }
+}
+
+function markToday(){
+  let streak=LS.get('cgv_streak',0); streak++; 
+  const best=LS.get('cgv_best',0); if(streak>best) LS.set('cgv_best',streak);
+  LS.set('cgv_streak',streak);
+  const now=new Date(), yr=now.getFullYear(), mo=now.getMonth(), d=now.getDate();
+  const calDone=LS.get('cgv_cal_'+yr+'_'+mo,{}); calDone[d]=true;
+  LS.set('cgv_cal_'+yr+'_'+mo,calDone);
+  const weekDone=LS.get('cgv_week',[false,false,false,false,false,false,false]);
+  weekDone[new Date().getDay()]=true; LS.set('cgv_week',weekDone);
+  renderStreak(); updateProb();
+}
+
+function resetStreak(){ if(confirm('Streak reset karna hai?')){ LS.set('cgv_streak',0); renderStreak(); updateProb(); } }
+
+// ══════════════════════════════
+// MOCK TEST GRAPH
+// ══════════════════════════════
+function addMockScore(){
+  const s=parseFloat(document.getElementById('mock-score-input').value);
+  const lbl=document.getElementById('mock-label-input').value||'Mock';
+  if(isNaN(s)||s<0||s>100) return;
+  const scores=LS.get('cgv_mocks',[]);
+  scores.push({s,lbl,date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'})});
+  LS.set('cgv_mocks',scores);
+  document.getElementById('mock-score-input').value='';
+  document.getElementById('mock-label-input').value='';
+  renderMockChart();
+}
+
+function delMock(i){ const sc=LS.get('cgv_mocks',[]); sc.splice(i,1); LS.set('cgv_mocks',sc); renderMockChart(); }
+
+function renderMockChart(){
+  const scores=LS.get('cgv_mocks',[]);
+  const list=document.getElementById('mock-list'); list.innerHTML='';
+
+  if(!scores.length){
+    list.innerHTML='<div style="color:var(--muted);font-size:.75rem;padding:10px">Abhi koi score nahi. Pehla mock test do!</div>';
+    document.getElementById('mock-chart').innerHTML='<text x="200" y="100" text-anchor="middle" fill="#4a5568" font-size="14">Koi data nahi — score add karo</text>';
+    ['mg-avg','mg-best','mg-last'].forEach(id=>document.getElementById(id).textContent='—');
+    return;
+  }
+
+  const avg=Math.round(scores.reduce((a,b)=>a+b.s,0)/scores.length);
+  const best=Math.max(...scores.map(s=>s.s));
+  const last=scores[scores.length-1].s;
+
+  document.getElementById('mg-avg').textContent=avg+'%';
+  document.getElementById('mg-best').textContent=best+'%';
+  document.getElementById('mg-last').textContent=last+'%';
+  document.getElementById('v-mock').innerHTML=last+'<span style="font-size:.8rem">%</span>';
+  document.getElementById('b-mock').style.width=Math.min((last/75)*100,100)+'%';
+
+  scores.forEach((sc,i)=>{
+    const el=document.createElement('div'); el.className='mock-item';
+    const cls=sc.s>=75?'score-green':sc.s>=50?'score-orange':'score-red';
+    el.innerHTML=`<span class="mock-item-date">${sc.date} · ${sc.lbl}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="mock-item-score ${cls}">${sc.s}%</span>
+        <button class="mock-item-del" onclick="delMock(${i})">✕</button>
+      </div>`;
+    list.appendChild(el);
+  });
+
+  // SVG chart
+  const svg=document.getElementById('mock-chart');
+  const W=400,H=200,PAD={t:15,r:20,b:30,l:40};
+  const cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
+  const n=scores.length, minS=0, maxS=100;
+  const xS=i=>PAD.l+(i/(Math.max(n-1,1)))*cW;
+  const yS=v=>PAD.t+(1-(v-minS)/(maxS-minS))*cH;
+
+  let html=`<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f97316" stop-opacity=".4"/>
+    <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+    </linearGradient></defs>`;
+
+  // Grid
+  [0,25,50,75,100].forEach(v=>{
+    html+=`<line class="grid-line" x1="${PAD.l}" y1="${yS(v)}" x2="${W-PAD.r}" y2="${yS(v)}"/>`;
+    html+=`<text class="axis-label" x="${PAD.l-4}" y="${yS(v)+4}" text-anchor="end">${v}</text>`;
+  });
+
+  // Target line at 75
+  html+=`<line class="target-line" x1="${PAD.l}" y1="${yS(75)}" x2="${W-PAD.r}" y2="${yS(75)}"/>`;
+  html+=`<text class="axis-label" x="${W-PAD.r+2}" y="${yS(75)+4}" fill="#22c55e">75%</text>`;
+
+  if(n>=2){
+    const pts=scores.map((sc,i)=>`${xS(i)},${yS(sc.s)}`).join(' ');
+    const apts=`${PAD.l},${yS(0)} `+scores.map((sc,i)=>`${xS(i)},${yS(sc.s)}`).join(' ')+` ${xS(n-1)},${yS(0)}`;
+    html+=`<polygon points="${apts}" fill="url(#ag)" class="data-area"/>`;
+    html+=`<polyline points="${pts}" class="data-line"/>`;
+  }
+
+  scores.forEach((sc,i)=>{
+    html+=`<circle class="data-dot" cx="${xS(i)}" cy="${yS(sc.s)}" r="5">
+      <title>${sc.date}: ${sc.s}%</title></circle>`;
+    if(n<=8) html+=`<text class="axis-label" x="${xS(i)}" y="${H-PAD.b+14}" text-anchor="middle">${sc.date}</text>`;
+  });
+
+  svg.innerHTML=html;
+}
+
+// ══════════════════════════════
+// TYPING PRACTICE
+// ══════════════════════════════
+const EN_PASSAGES=[
+  "The Chhattisgarh Public Service Commission conducts various recruitment examinations for state government posts every year.",
+  "Data Entry Operators are responsible for entering information into computer systems accurately and efficiently.",
+  "Good typing speed with high accuracy is essential for the Data Entry Operator examination in Chhattisgarh.",
+  "The Mahanadi river originates in Chhattisgarh and is the lifeline of the state flowing through its plains.",
+  "Computer literacy is mandatory for modern government employees who work with digital records and online systems."
+];
+const HI_PASSAGES=[
+  "छत्तीसगढ़ व्यापमं द्वारा डाटा एंट्री ऑपरेटर पद हेतु परीक्षा का आयोजन किया जाता है।",
+  "महानदी छत्तीसगढ़ की सबसे प्रमुख नदी है जो राज्य के मध्य भाग से होकर बहती है।",
+  "सामान्य ज्ञान और कंप्यूटर ज्ञान की परीक्षा में अच्छे अंक लाना आवश्यक है।",
+  "छत्तीसगढ़ राज्य का गठन एक नवंबर सन दो हजार को हुआ था।",
+  "पंचायती राज व्यवस्था में ग्राम पंचायत सबसे छोटी इकाई होती है।"
+];
+
+let tLang='en', tTimer=null, tSeconds=60, tStarted=false, tPassage='', tInput='';
+
+function setTypingLang(lang,btn){
+  tLang=lang;
+  document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  resetTyping();
+}
+
+function getPassage(){
+  const arr=tLang==='en'?EN_PASSAGES:HI_PASSAGES;
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function startTyping(){
+  tPassage=getPassage();
+  resetTyping(true);
+  document.getElementById('typing-input').focus();
+}
+
+function resetTyping(keepPassage){
+  clearInterval(tTimer);
+  tStarted=false; tSeconds=60; tInput='';
+  document.getElementById('typing-input').value='';
+  document.getElementById('typing-input').disabled=false;
+  document.getElementById('t-timer').textContent='01:00';
+  document.getElementById('t-timer').style.color='var(--gold)';
+  document.getElementById('t-wpm').textContent='0';
+  document.getElementById('t-acc').textContent='100%';
+  document.getElementById('t-chars').textContent='0';
+  document.getElementById('t-errs').textContent='0';
+  document.getElementById('save-wpm-btn').style.display='none';
+  document.getElementById('typing-msg').textContent='';
+  if(keepPassage&&tPassage) renderPassage('');
+  else if(!tPassage){ document.getElementById('typing-passage').textContent='Start pe click karo aur type karna shuru karo...'; }
+  else renderPassage('');
+}
+
+function renderPassage(typed){
+  const el=document.getElementById('typing-passage');
+  if(!tPassage){ el.textContent='Start pe click karo...'; return; }
+  let html='';
+  for(let i=0;i<tPassage.length;i++){
+    if(i<typed.length){
+      if(typed[i]===tPassage[i]) html+=`<span class="correct">${tPassage[i]}</span>`;
+      else html+=`<span class="wrong">${tPassage[i]}</span>`;
+    } else if(i===typed.length){
+      html+=`<span class="current">${tPassage[i]}</span>`;
+    } else {
+      html+=`<span class="pending">${tPassage[i]}</span>`;
+    }
+  }
+  el.innerHTML=html;
+}
+
+function handleTyping(){
+  const inp=document.getElementById('typing-input');
+  tInput=inp.value;
+  if(!tStarted&&tInput.length>0){
+    tStarted=true;
+    tTimer=setInterval(()=>{
+      tSeconds--;
+      const m=Math.floor(tSeconds/60), s=tSeconds%60;
+      document.getElementById('t-timer').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+      if(tSeconds<=10) document.getElementById('t-timer').style.color='var(--rose)';
+      if(tSeconds<=0){ clearInterval(tTimer); finishTyping(); }
+    },1000);
+  }
+  renderPassage(tInput);
+  // live stats
+  let correct=0,errors=0;
+  for(let i=0;i<tInput.length;i++){
+    if(i<tPassage.length) tInput[i]===tPassage[i]?correct++:errors++;
+  }
+  const elapsed=(60-tSeconds)||1;
+  const wpm=Math.round((correct/5)/(elapsed/60));
+  const acc=tInput.length?Math.round((correct/tInput.length)*100):100;
+  document.getElementById('t-wpm').textContent=wpm;
+  document.getElementById('t-acc').textContent=acc+'%';
+  document.getElementById('t-chars').textContent=correct;
+  document.getElementById('t-errs').textContent=errors;
+
+  if(tInput.length>=tPassage.length){ clearInterval(tTimer); finishTyping(); }
+}
+
+function finishTyping(){
+  const inp=document.getElementById('typing-input');
+  inp.disabled=true;
+  const wpm=parseInt(document.getElementById('t-wpm').textContent);
+  const acc=parseInt(document.getElementById('t-acc').textContent);
+  const msg=wpm>=35?'🏆 Exam ready! Zabardast speed!':wpm>=25?'💪 Achha hai! Thoda aur practice karo.':'🌱 Keep going! Daily practice se WPM badhega.';
+  document.getElementById('typing-msg').textContent=msg;
+  document.getElementById('save-wpm-btn').style.display='inline-block';
+  document.getElementById('save-wpm-btn').onclick=()=>{
+    const hist=LS.get('cgv_typing_hist',[]);
+    hist.unshift({wpm,acc,lang:tLang,date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'})});
+    if(hist.length>10) hist.pop();
+    LS.set('cgv_typing_hist',hist);
+    if(wpm>LS.get('cgv_wpm',0)){ LS.set('cgv_wpm',wpm); renderStat('wpm',wpm); updateProb(); }
+    loadTypingHistory();
+    document.getElementById('save-wpm-btn').style.display='none';
+  };
+}
+
+function loadTypingHistory(){
+  const hist=LS.get('cgv_typing_hist',[]);
+  const el=document.getElementById('typing-history');
+  if(!hist.length){ el.textContent='Abhi koi record nahi. Practice shuru karo!'; return; }
+  el.innerHTML=hist.map(h=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+    <span style="color:var(--muted)">${h.date} · ${h.lang==='en'?'EN':'HI'}</span>
+    <span><b style="color:var(--orange)">${h.wpm} WPM</b> <span style="color:var(--muted)">·</span> <span style="color:var(--green)">${h.acc}% acc</span></span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════
+// SYLLABUS CHIPS
+// ══════════════════════════════
+const TOTAL=33;
+function toggleChip(el){
+  el.classList.toggle('done'); el.classList.toggle('undone');
+  const state={};
+  document.querySelectorAll('.chip').forEach(c=>state[c.dataset.id]=c.classList.contains('done'));
+  LS.set('cgv_chips',state);
+  const done=Object.values(state).filter(Boolean).length;
+  const pct=Math.round((done/TOTAL)*100);
+  LS.set('cgv_syl',pct); renderStat('syl',pct); updateProb();
+}
+
+// ══════════════════════════════
+// INIT
+// ══════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  // load stats
+  Object.keys(SCFG).forEach(t=>{ const v=LS.get(SCFG[t].k,null); if(v!==null) renderStat(t,v); });
+  // load chips
+  const chipState=LS.get('cgv_chips',{});
+  document.querySelectorAll('.chip').forEach(c=>{
+    if(chipState[c.dataset.id]){ c.classList.add('done'); c.classList.remove('undone'); }
+  });
+  // streak badge
+  document.getElementById('db-streak-badge').textContent='🔥 '+LS.get('cgv_streak',0)+' Day Streak';
+  updateProb();
+
+  // enter key
+  document.querySelectorAll('.up-row input').forEach(inp=>{
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter') saveS(inp.id.replace('i-','')); });
+  });
+  document.getElementById('mock-score-input').addEventListener('keydown',e=>{ if(e.key==='Enter') addMockScore(); });
+});
+</script>
+
+<!-- ================= STUDY TOOLS ADDON ================= -->
+<div class="card" style="margin-top:20px">
+<div class="sec-title">📚 Study Tools</div>
+
+<h3>🔎 Search Study Notes</h3>
+<input type="text" id="study-search" placeholder="Search topic e.g. MS Word shortcut keys" style="width:100%;padding:8px;margin-top:6px">
+<button onclick="searchStudy()" style="margin-top:6px">Search Notes</button>
+
+<h3 style="margin-top:16px">🎥 Search YouTube Lesson</h3>
+<input type="text" id="yt-search" placeholder="Search video topic" style="width:100%;padding:8px;margin-top:6px">
+<button onclick="searchYT()" style="margin-top:6px">Search Video</button>
+
+</div>
+
+<div class="card" style="margin-top:20px">
+<div class="sec-title">🧠 Random MCQ Practice</div>
+
+<label>Subject</label>
+<select id="mcq-subject">
+<option value="computer">Computer</option>
+<option value="reasoning">Reasoning</option>
+<option value="gk">GK</option>
+<option value="cg">CG GK</option>
+</select>
+
+<label>Questions</label>
+<select id="mcq-count">
+<option value="5">5</option>
+<option value="10">10</option>
+<option value="20">20</option>
+</select>
+
+<button onclick="startMCQTest()">Start Test</button>
+
+<div id="mcq-timer" style="margin-top:10px;font-weight:bold"></div>
+<div id="mcq-container" style="margin-top:10px"></div>
+</div>
+
+<script>
+
+function searchStudy(){
+const q=document.getElementById("study-search").value;
+const query=q+" computer notes pdf tutorial";
+const url="https://www.google.com/search?q="+encodeURIComponent(query);
+window.open(url,"_blank");
+}
+
+function searchYT(){
+const q=document.getElementById("yt-search").value;
+const url="https://www.youtube.com/results?search_query="+encodeURIComponent(q+" computer tutorial");
+window.open(url,"_blank");
+}
+
+const mcqDB={
+
+computer:[
+{q:"CPU ka full form kya hai?",o:["Central Processing Unit","Computer Power Unit","Central Print Unit","Control Processing Unit"],a:0},
+{q:"1 Byte me kitne bits hote hain?",o:["4","8","16","32"],a:1},
+{q:"HTML ka use kis liye hota hai?",o:["Web Structure","Database","Operating System","Networking"],a:0},
+{q:"RAM ka type kya hai?",o:["Permanent","Volatile","Optical","Magnetic"],a:1},
+{q:"MS Word kis type ka software hai?",o:["System","Application","Utility","Driver"],a:1}
+],
+
+reasoning:[
+{q:"Series: 2 4 8 16 ?",o:["24","32","18","30"],a:1},
+{q:"Odd one out: Cow Dog Tiger Car",o:["Cow","Dog","Tiger","Car"],a:3}
+],
+
+gk:[
+{q:"India ki rajdhani kya hai?",o:["Delhi","Mumbai","Bhopal","Lucknow"],a:0},
+{q:"India ka rashtriya pashu kya hai?",o:["Tiger","Lion","Elephant","Cow"],a:0}
+],
+
+cg:[
+{q:"Chhattisgarh ka rajya divas kab hai?",o:["1 November","15 August","26 January","2 October"],a:0},
+{q:"Chhattisgarh ki rajdhani kya hai?",o:["Raipur","Bilaspur","Durg","Rajnandgaon"],a:0}
+]
+
+};
+
+let currentTest=[];
+let testTimer;
+
+function startMCQTest(){
+const subject=document.getElementById("mcq-subject").value;
+const count=parseInt(document.getElementById("mcq-count").value);
+const data=[...mcqDB[subject]].sort(()=>0.5-Math.random());
+currentTest=data.slice(0,count);
+renderTest();
+startTimer(count*30);
+}
+
+function renderTest(){
+const container=document.getElementById("mcq-container");
+container.innerHTML="";
+currentTest.forEach((q,i)=>{
+let html=`<div style="margin-bottom:15px"><b>Q${i+1}. ${q.q}</b><br>`;
+q.o.forEach((opt,j)=>{
+html+=`<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label><br>`;
+});
+html+=`</div>`;
+container.innerHTML+=html;
+});
+container.innerHTML+=`<button onclick="submitTest()">Submit Test</button>`;
+}
+
+function startTimer(sec){
+let time=sec;
+testTimer=setInterval(()=>{
+let m=Math.floor(time/60);
+let s=time%60;
+document.getElementById("mcq-timer").innerText="Time Left: "+m+":"+s;
+time--;
+if(time<=0){
+clearInterval(testTimer);
+submitTest();
+}
+},1000);
+}
+
+function submitTest(){
+clearInterval(testTimer);
+let score=0;
+currentTest.forEach((q,i)=>{
+const ans=document.querySelector(`input[name=q${i}]:checked`);
+if(ans && parseInt(ans.value)===q.a){score++;}
+});
+const total=currentTest.length;
+alert("Score: "+score+" / "+total);
+}
+
+</script>
+<!-- ================= END STUDY TOOLS ================= -->
+
+</body>
+</html>
