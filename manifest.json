@@ -1,0 +1,25 @@
+{
+  "name": "CGVyapam 2026 Exam Prep",
+  "short_name": "CGVyapam",
+  "description": "CGVyapam DEO/Grade-03 Study Timetable App",
+  "start_url": "/study-app/",
+  "scope": "/study-app/",
+  "display": "standalone",
+  "background_color": "#08080f",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
